@@ -10,13 +10,19 @@ class Quiz:
         self.choices = choices
         self.answer = answer
 
-    def show_question(self):
-        # TODO: Implement showing the question and choices
-        pass
-
+    def show_question(self, index=1, total=1):
+        print(f"\n{'-'*40}")
+        print(f"[문제 {index}/{total}]")
+        print(self.question, "\n")
+        
+        for i, choice in enumerate(self.choices, 1):
+            print(f"{i}. {choice}")
+            
     def check_answer(self, user_answer):
-        # TODO: Implement logic to check answer
-        pass
+        try:
+            return int(user_answer) == self.answer
+        except ValueError:
+            return False
 
 
 class QuizGame:
