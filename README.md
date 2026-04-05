@@ -75,7 +75,7 @@ $ ls -l src/index.html
 
 ```bash
 $ git init
-$ git config user.name "camus"
+$ git config user.name "1st0Groom"
 $ git config user.email "nadomolla08@naver.com"
 $ git config init.defaultBranch main
 $ git config --list
@@ -84,7 +84,7 @@ core.repositoryformatversion=0
 core.filemode=true
 core.bare=false
 core.logallrefupdates=true
-user.name=camus
+user.name=1st0Groom
 user.email=nadomolla08@naver.com
 init.defaultbranch=main
 ```
