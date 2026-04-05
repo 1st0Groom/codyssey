@@ -1,5 +1,26 @@
 import sys
 
+class Quiz:
+    def __init__(self, question, choices, answer, hint=""):
+        self.question = question
+        self.choices = choices
+        """answer는 1에서 4 사이의 정수 (선택지 번호)"""
+        self.answer = answer
+        self.hint = hint
+
+    def display(self, index=1, total=1):
+        print(f"\n{'-'*40}")
+        print(f"[문제 {index}/{total}]")
+        print(self.question, "\n")
+        for i, choice in enumerate(self.choices, 1):
+            print(f"{i}. {choice}")
+            
+    def check_answer(self, user_input):
+        try:
+            return int(user_input) == self.answer
+        except ValueError:
+            return False
+
 class QuizGame:
     def __init__(self):
         # 향후 퀴즈 목록과 점수를 저장할 변수
