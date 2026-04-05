@@ -1,5 +1,7 @@
 import sys
 import random
+import json
+import os
 
 class Quiz:
     def __init__(self, question, choices, answer, hint=""):
@@ -24,15 +26,10 @@ class Quiz:
 
 class QuizGame:
     def __init__(self):
-        # 향후 퀴즈 목록과 점수를 저장할 변수
-        self.quizzes = [
-            Quiz("Python의 창시자는 누구일까요?", ["Guido van Rossum", "Linus Torvalds", "James Gosling", "Bjarne Stroustrup"], 1, "파이썬 세계에서는 오랫동안 '종신 자비로운 독재자(BDFL)'라 불렸습니다."),
-            Quiz("다음 중 Python의 웹 프레임워크가 아닌 것은?", ["Django", "Flask", "FastAPI", "Spring"], 4, "이것은 Java 생태계의 가장 대표적인 프레임워크입니다."),
-            Quiz("Git을 처음 개발한 사람은 누구일까요?", ["Bill Gates", "Linus Torvalds", "Steve Jobs", "Mark Zuckerberg"], 2, "Linux 커널의 창시자이기도 합니다."),
-            Quiz("데이터를 키-값 쌍으로 저장하는 Python의 기본 자료형은?", ["List", "Tuple", "Dictionary", "Set"], 3, "중괄호 {}를 사용하며 JSON 데이터와 구조가 매우 유사합니다."),
-            Quiz("Python에서 클래스의 생성자 메서드 이름은?", ["__init__", "__start__", "constructor", "init"], 1, "밑줄(underscore) 두 개로 시작하고 끝납니다.")
-        ]
+        self.quizzes = []
         self.best_score = 0
+        self.state_file = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "state.json"))
+        self.load_data()
         
     def display_menu(self):
         print("\n========================================")
@@ -95,6 +92,7 @@ class QuizGame:
 
         hint = input("힌트를 입력하세요 (없으면 엔터): ").strip()
         self.quizzes.append(Quiz(question, choices, answer, hint))
+        self.save_data()
         print("✅ 퀴즈가 성공적으로 추가되었습니다!")
 
     def play_quiz(self):
@@ -152,6 +150,7 @@ class QuizGame:
         if score > self.best_score:
             print("🎉 새로운 최고 점수입니다!")
             self.best_score = score
+            self.save_data()
         print(f"{'='*40}")
 
     def list_quizzes(self):
@@ -169,6 +168,41 @@ class QuizGame:
         print("\n" + "="*40)
         print(f"🏆 현재 최고 점수: {self.best_score}점")
         print("="*40)
+
+    def load_data(self):
+        if os.path.exists(self.state_file):
+            try:
+                with open(self.state_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    self.best_score = data.get("best_score", 0)
+                    for q in data.get("quizzes", []):
+                        self.quizzes.append(Quiz(q["question"], q["choices"], q["answer"], q.get("hint", "")))
+                print(f"📂 저장된 데이터를 불러왔습니다. (퀴즈 {len(self.quizzes)}개, 최고점수 {self.best_score}점)")
+                return
+            except Exception as e:
+                print(f"⚠️ 데이터 파일이 손상되었거나 로딩 중 오류가 발생했습니다. 기본값으로 덮어씁니다. (오류: {e})")
+
+        # 파일이 없거나 손상된 경우 기본 퀴즈 데이터 초기화
+        self.quizzes = [
+            Quiz("Python의 창시자는 누구일까요?", ["Guido van Rossum", "Linus Torvalds", "James Gosling", "Bjarne Stroustrup"], 1, "파이썬 세계에서는 오랫동안 '종신 자비로운 독재자(BDFL)'라 불렸습니다."),
+            Quiz("다음 중 Python의 웹 프레임워크가 아닌 것은?", ["Django", "Flask", "FastAPI", "Spring"], 4, "이것은 Java 생태계의 가장 대표적인 프레임워크입니다."),
+            Quiz("Git을 처음 개발한 사람은 누구일까요?", ["Bill Gates", "Linus Torvalds", "Steve Jobs", "Mark Zuckerberg"], 2, "Linux 커널의 창시자이기도 합니다."),
+            Quiz("데이터를 키-값 쌍으로 저장하는 Python의 기본 자료형은?", ["List", "Tuple", "Dictionary", "Set"], 3, "중괄호 {}를 사용하며 JSON 데이터와 구조가 매우 유사합니다."),
+            Quiz("Python에서 클래스의 생성자 메서드 이름은?", ["__init__", "__start__", "constructor", "init"], 1, "밑줄(underscore) 두 개로 시작하고 끝납니다.")
+        ]
+        self.best_score = 0
+        self.save_data()
+
+    def save_data(self):
+        data = {
+            "quizzes": [{"question": q.question, "choices": q.choices, "answer": q.answer, "hint": q.hint} for q in self.quizzes],
+            "best_score": self.best_score
+        }
+        try:
+            with open(self.state_file, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+        except Exception as e:
+            print(f"⚠️ 데이터를 저장하는데 실패했습니다: {e}")
 
 if __name__ == "__main__":
     try:
