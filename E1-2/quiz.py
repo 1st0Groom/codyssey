@@ -57,7 +57,7 @@ class QuizGame:
             if choice == '1':
                 self.play_quiz()
             elif choice == '2':
-                print("📌 퀴즈 추가 기능 준비 중...")
+                self.add_quiz()
             elif choice == '3':
                 print("📌 퀴즈 목록 기능 준비 중...")
             elif choice == '4':
@@ -67,6 +67,35 @@ class QuizGame:
                 sys.exit(0)
             else:
                 print("⚠️ 잘못된 입력입니다. 1-5 사이의 숫자를 입력하세요.\n")
+
+    def add_quiz(self):
+        print("\n📌 새로운 퀴즈를 추가합니다.")
+        question = input("문제를 입력하세요: ").strip()
+        if not question:
+            print("⚠️ 빈 입력입니다. 퀴즈 추가를 취소합니다.")
+            return
+
+        choices = []
+        for i in range(1, 5):
+            while True:
+                choice = input(f"선택지 {i}: ").strip()
+                if not choice:
+                    print("⚠️ 빈 입력입니다. 다시 입력해주세요.")
+                else:
+                    choices.append(choice)
+                    break
+        
+        while True:
+            ans_input = input("정답 번호 (1-4): ").strip()
+            if not ans_input.isdigit() or not (1 <= int(ans_input) <= 4):
+                print("⚠️ 1에서 4 사이의 숫자를 입력하세요.")
+                continue
+            answer = int(ans_input)
+            break
+
+        hint = input("힌트를 입력하세요 (없으면 엔터): ").strip()
+        self.quizzes.append(Quiz(question, choices, answer, hint))
+        print("✅ 퀴즈가 성공적으로 추가되었습니다!")
 
     def play_quiz(self):
         if not self.quizzes:
