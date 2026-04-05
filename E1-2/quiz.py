@@ -59,9 +59,9 @@ class QuizGame:
             elif choice == '2':
                 self.add_quiz()
             elif choice == '3':
-                print("📌 퀴즈 목록 기능 준비 중...")
+                self.list_quizzes()
             elif choice == '4':
-                print("📌 점수 확인 기능 준비 중...")
+                self.show_score()
             elif choice == '5':
                 print("게임을 종료합니다. 안녕히 가세요! 👋")
                 sys.exit(0)
@@ -153,6 +153,22 @@ class QuizGame:
             print("🎉 새로운 최고 점수입니다!")
             self.best_score = score
         print(f"{'='*40}")
+
+    def list_quizzes(self):
+        if not self.quizzes:
+            print("\n📋 현재 등록된 퀴즈가 없습니다.")
+            return
+            
+        print(f"\n📋 등록된 퀴즈 목록 (총 {len(self.quizzes)}개)")
+        print("-" * 40)
+        for i, q in enumerate(self.quizzes, 1):
+            print(f"[{i}] {q.question}")
+        print("-" * 40)
+
+    def show_score(self):
+        print("\n" + "="*40)
+        print(f"🏆 현재 최고 점수: {self.best_score}점")
+        print("="*40)
 
 if __name__ == "__main__":
     try:
