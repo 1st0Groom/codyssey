@@ -1,4 +1,5 @@
 import sys
+import random
 
 class Quiz:
     def __init__(self, question, choices, answer, hint=""):
@@ -54,7 +55,7 @@ class QuizGame:
                 continue
                 
             if choice == '1':
-                print("📌 퀴즈 풀기 기능 준비 중...")
+                self.play_quiz()
             elif choice == '2':
                 print("📌 퀴즈 추가 기능 준비 중...")
             elif choice == '3':
@@ -66,6 +67,63 @@ class QuizGame:
                 sys.exit(0)
             else:
                 print("⚠️ 잘못된 입력입니다. 1-5 사이의 숫자를 입력하세요.\n")
+
+    def play_quiz(self):
+        if not self.quizzes:
+            print("⚠️ 등록된 퀴즈가 없습니다! 퀴즈를 먼저 추가해주세요.")
+            return
+
+        # 랜덤 출제 로직
+        play_list = self.quizzes.copy()
+        random.shuffle(play_list)
+
+        print(f"\n📝 퀴즈를 시작합니다! (총 {len(play_list)}문제)")
+        
+        score = 0
+        for i, q in enumerate(play_list, 1):
+            q.display(i, len(play_list))
+            used_hint = False
+            
+            while True:
+                user_input = input("정답 입력 (힌트 보기: 'h' 또는 'hint'): ").strip().lower()
+                
+                if not user_input:
+                    print("⚠️ 빈 입력입니다. 다시 입력해주세요.")
+                    continue
+                    
+                if user_input in ['h', 'hint']:
+                    if not used_hint:
+                        print(f"💡 힌트: {q.hint}")
+                        used_hint = True
+                    else:
+                        print("⚠️ 힌트를 이미 사용했습니다.")
+                    continue
+                    
+                if not user_input.isdigit():
+                    print("⚠️ 숫자 정답을 입력하거나, 힌트를 보려면 'h'를 입력하세요.")
+                    continue
+                    
+                answer_num = int(user_input)
+                if not 1 <= answer_num <= len(q.choices):
+                    print(f"⚠️ 1에서 {len(q.choices)} 사이의 번호를 입력하세요.")
+                    continue
+                
+                # 정답 확인
+                if q.check_answer(user_input):
+                    # 힌트 사용 시 0.5점(점수 차감 로직 - 보너스 과제) 부여
+                    earned = 0.5 if used_hint else 1
+                    print("✅ 정답입니다!" + (" (힌트 사용으로 0.5점)" if used_hint else ""))
+                    score += earned
+                else:
+                    print(f"❌ 오답입니다! 정답은 {q.answer}번입니다.")
+                break
+
+        print(f"\n{'='*40}")
+        print(f"🏆 결과: {len(play_list)}문제 중 총 {score}점 획득! ({int(score/len(play_list)*100)}점)")
+        if score > self.best_score:
+            print("🎉 새로운 최고 점수입니다!")
+            self.best_score = score
+        print(f"{'='*40}")
 
 if __name__ == "__main__":
     try:
