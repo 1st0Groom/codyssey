@@ -61,3 +61,5 @@ codyssey/
 - `docs/screenshots/play.png`
 - `docs/screenshots/add_quiz.png`
 - `docs/screenshots/score.png`
+
+- [x] Clone 및 Pull 원격 실습 확인 완료
