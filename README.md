@@ -27,12 +27,29 @@ python quiz.py
 5. **예외 처리 기법**: 숫자가 아닌 문자 입력, 공백, 범위 밖 숫자, `Ctrl+C` 등을 완벽히 방어하여 비정상 종료를 막습니다.
 
 ## 📁 파일 구조
-```
+```text
 codyssey/
 ├── E1-2/
 │   └── quiz.py      # 게임 실행을 담당하는 메인 코드 (Quiz / QuizGame 클래스)
 ├── state.json       # 영구 저장을 위한 데이터베이스 파일
 └── README.md        # 프로젝트 설명서 (현재 파일)
+```
+
+## ⚙️ 초기 설정 내역
+```bash
+$ git init
+$ git config user.name "1st0Groom"
+$ git config user.email "nadomolla08@naver.com"
+$ git config init.defaultBranch main
+$ git config --list
+
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+user.name=1st0Groom
+user.email=nadomolla08@naver.com
+init.defaultbranch=main
 ```
 
 ## 📂 데이터 파일 설명 (`state.json`)
@@ -241,3 +258,8 @@ if __name__ == "__main__":
 ![최고 점수](docs/images/score.png)
 
 - [x] Clone 및 Pull 원격 실습 확인 완료
+
+### Case 4: 도커 스냅샷 불변성(Immutability) 오해 및 바인드 마운트로 해결
+- **문제 상황**: 서버 인프라는 정상이나, 호스트의 `src/index.html` 파일 내용을 수정해도 웹 브라우저 화면의 코드가 업데이트되지 않음.
+- **원인 가설**: Dockerfile의 `COPY` 지시어로 구워진 이미지는 빌드 시점의 '정적 스냅샷'이므로, 실행 중인 컨테이너는 호스트의 파일 변경을 감지할 수 없는 구조(불변성)임을 인지함.
+- **확인 및 해결**: 변경 시마다 다시 빌드하는 비효율을 제거하기 위해, `-v "$PWD/src:/usr/share/nginx/html"` 옵션을 추가한 바인드 마운트(Bind Mount) 방식으로 컨테이너를 재실행함. 호스트 소스 디렉토리와 컨테이너 내부를 직접 마운트하여 실시간으로 데이터가 동기화됨을 증명함.
