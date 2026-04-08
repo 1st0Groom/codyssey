@@ -65,6 +65,17 @@
             ],
             "answer": 3,
             "hint": "이런게 어딨어"
+        },
+        {
+            "question": "안녕하세요",
+            "choices": [
+                "2",
+                "3",
+                "4",
+                "1"
+            ],
+            "answer": 2,
+            "hint": "아무거나"
         }
     ],
     "best_score": 2
