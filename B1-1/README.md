@@ -1,6 +1,6 @@
 # 🚀 Linux-Based Agent Application Infrastructure & Automation Project
 
-본 프로젝트는 **Ubuntu 22.04 LTS** 환경에서 리눅스 시스템 보안 및 프로세스 자동 관제 인프라를 성공적으로 구축한 엔지니어링 미션입니다. **최소 권한 원칙(Principle of Least Privilege)**을 준수하여 다중 사용자 격리 보안 체계를 설계하였으며, 백그라운드 에이전트 서비스(`agent_app`)의 안정적인 구동과 무중단 관제를 위한 실시간 모니터링 자동화 스크립트(`monitor.sh`), 그리고 디스크 고갈 방지를 위한 시간 기반 로그 관리(Log Rotation) 정책을 수립하였습니다.
+본 프로젝트는 **Ubuntu 22.04 LTS** 환경에서 리눅스 시스템 보안 및 프로세스 자동 관제 인프라를 성공적으로 구축한 엔지니어링 미션입니다. **최소 권한 원칙(Principle of Least Privilege)**을 준수하여 다중 사용자 격리 보안 체계를 설계하였으며, 백그라운드 에이전트 서비스(`agent_app`)의 안정적인 구동과 무중단 관제를 위한 실시간 모니터링 자동화 스크립트([monitor.sh](./monitor.sh)), 그리고 디스크 고갈 방지를 위한 시간 기반 로그 관리(Log Rotation) 정책을 수립하였습니다.
 
 ---
 
@@ -9,7 +9,7 @@
 이 프로젝트는 시스템 인프라 설계부터 네트워크 보안, 백그라운드 프로세스 관제, 그리고 자동화된 로그 수명 주기 관리(Rotation)까지 전 과정을 체계적으로 구현하였습니다.
 
 ### ⚙️ 시스템 아키텍처 & 데이터 흐름
-아래 다이어그램은 백그라운드에서 실행되는 `agent_app`과 크론탭(Crontab)을 통해 1분 주기마다 실행되는 `monitor.sh` 관제 스크립트의 유기적인 상호작용 및 로그 처리 흐름을 보여줍니다.
+아래 다이어그램은 백그라운드에서 실행되는 `agent_app`과 크론탭(Crontab)을 통해 1분 주기마다 실행되는 [monitor.sh](./monitor.sh) 관제 스크립트의 유기적인 상호작용 및 로그 처리 흐름을 보여줍니다.
 
 ```mermaid
 sequenceDiagram
@@ -51,7 +51,7 @@ sequenceDiagram
    * 방화벽(UFW) 정책을 기본 차단(Deny)으로 수립하고, SSH(20022) 및 앱 포트(15034)만을 명시적으로 허용(Allow)하는 화이트리스트 접근 제어를 수행했습니다.
 3. **3단계: 백그라운드 구동 및 실시간 관제 자동화**
    * 에이전트 앱의 실행 환경 변수 설정을 계정 프로필에 주입하여 항상 고정된 환경에서 구동(Boot Sequence)되도록 유도하였습니다.
-   * `monitor.sh` Bash 스크립트를 작성하여 시스템 자원 감시 및 7일/30일 단위의 디스크 로그 보존 정책(Log Rotation)을 자동 실행하도록 크론탭에 등록하였습니다.
+   * [monitor.sh](./monitor.sh) Bash 스크립트를 작성하여 시스템 자원 감시 및 7일/30일 단위의 디스크 로그 보존 정책(Log Rotation)을 자동 실행하도록 크론탭에 등록하였습니다.
 
 ---
 
@@ -65,14 +65,14 @@ sequenceDiagram
 | `/home/agent-admin/agent-app/` | `agent-admin` | `agent-core` | `755` | `sudo chmod 755 [경로]`<br>외부 계정의 디렉토리 진입(`x`) 및 목록 조회(`r`)를 허용하되, 쓰기는 차단 |
 | `├── agent_app` | `agent-admin` | `agent-core` | `755` | `sudo chmod 755 [파일]`<br>에이전트 유닉스 바이너리 실행 권한을 관리자 및 외부 계정에게 부여 |
 | `├── api_keys/secret.key` | `agent-admin` | `agent-core` | `600` | `sudo chmod 600 [파일]`<br>**보안 디렉토리 내 중요 키**. 소유자 외 다른 사용자의 읽기/쓰기를 완벽히 차단 |
-| `└── bin/monitor.sh` | `agent-dev` | `agent-core` | `750` | `sudo chmod 750 [파일]`<br>**개발자 소유, 어드민 그룹 실행**. 제3자 외부 계정의 접근 및 실행 시도를 원천 차단 |
+| `└── bin/`[monitor.sh](./monitor.sh) | `agent-dev` | `agent-core` | `750` | `sudo chmod 750 [경로]`<br>**개발자 소유, 어드민 그룹 실행**. 제3자 외부 계정의 접근 및 실행 시도를 원천 차단 |
 | `└── upload_files/` | `agent-admin` | `agent-common` | `770` | `sudo chmod 770 [경로]`<br>**공유 디렉토리**. 동일 그룹(`agent-common`) 내 사용자들 간에 자유로운 R/W 협업 보장 |
 | `/var/log/agent-app/` | `agent-admin` | `agent-core` | `770` | `sudo chmod 770 [경로]`<br>실시간 모니터링 로그 저장소로, 핵심 관리자 그룹 외에는 열람 및 임의 수정을 차단 |
 | `/var/log/monitor/agent-app/archive/` | `agent-admin` | `agent-core` | `775` | `sudo chmod 775 [경로]`<br>[보너스 2] 로그 보존 정책에 의해 압축 백업본(`.gz`)이 보관되는 아카이브 전용 공간 |
 
 ### 👥 계정 및 그룹 구성 현황
 * **`agent-admin`**: 인프라 운영/관리 및 자동 관제 스크립트 실행 주체 (`agent-common`, `agent-core` 소속)
-* **`agent-dev`**: 애플리케이션 개발자이자 관제 스크립트(`monitor.sh`) 작성 및 디버거 (`agent-common`, `agent-core` 소속)
+* **`agent-dev`**: 애플리케이션 개발자이자 관제 스크립트([monitor.sh](./monitor.sh)) 작성 및 디버거 (`agent-common`, `agent-core` 소속)
 * **`agent-test`**: QA 및 기능 테스트를 수행하는 계정 (`agent-common` 소속, 핵심 보안 자산 접근 불가)
 
 ---
@@ -111,7 +111,7 @@ sequenceDiagram
   nohup ./agent_app > /var/log/agent-app/app_init.log 2>&1 &
   ```
 
-### 2) 시스템 관제 자동화 스크립트 (monitor.sh)
+### 2) 시스템 관제 자동화 스크립트 ([monitor.sh](./monitor.sh))
 * **파일 위치**: `/home/agent-admin/agent-app/bin/monitor.sh`
 * **동작 주기 설정** (`crontab -e` 등록):
   ```cron
@@ -119,7 +119,7 @@ sequenceDiagram
   ```
 
 ### 3) [보너스 2] 시간 기반 로그 보존 정책 (Log Rotation)
-서버 디스크 공간 고갈 장애를 방지하기 위해 예외 처리가 가미된 로그 아카이브 및 제거 로직을 `monitor.sh` 내에 구현하였습니다.
+서버 디스크 공간 고갈 장애를 방지하기 위해 예외 처리가 가미된 로그 아카이브 및 제거 로직을 [monitor.sh](./monitor.sh) 내에 구현하였습니다.
 * **7일 경과**: `/var/log/agent-app/` 내의 `.log` 파일들을 탐색하여 `gzip` 압축 후 아카이브 디렉토리로 이동시키고, 원본 로그 파일은 안전하게 삭제(`rm -f`)합니다.
 * **30일 경과**: 아카이브 디렉토리 내에 보관 중인 `.gz` 압축 로그를 추적하여 디스크에서 영구 삭제합니다.
 * **예외 처리 방어 코드**:
@@ -169,7 +169,7 @@ ls -ld /home/agent-admin/agent-app/upload_files/
 ls -ld /var/log/agent-app/
 ```
 * **기대 결과**:
-  - `secret.key` 권한은 `-rw-------` 이어야 하며, `monitor.sh` 권한은 `-rwxr-x---` 이어야 합니다.
+  - `secret.key` 권한은 `-rw-------` 이어야 하며, [monitor.sh](./monitor.sh) 권한은 `-rwxr-x---` 이어야 합니다.
   - `upload_files`와 `/var/log/agent-app` 디렉토리 권한은 `drwxrwxr--` 또는 `drwxrwx---` 형태여야 외부 일반 계정의 쓰기/읽기 접근을 방어할 수 있습니다.
 
 ---
@@ -203,7 +203,7 @@ ps -ef | grep agent_app | grep -v grep
 # 2. 에이전트 서비스 전용 포트(15034) 리스닝 상태 체크
 ss -tulnp | grep 15034
 
-# 3. 크론탭에 monitor.sh 스크립트가 누락 없이 등록되었는지 확인
+# 3. 크론탭에 [monitor.sh](./monitor.sh) 스크립트가 누락 없이 등록되었는지 확인
 sudo crontab -u agent-admin -l
 
 # 4. 1분 주기로 관제 로그가 정상 수집되어 누적되고 있는지 실시간 모니터링
@@ -237,7 +237,7 @@ Agent READY
 ```
 
 ### 🟢 증적 2: 관제 스크립트에 의한 실시간 수집 및 보존 로그 (monitor.log)
-`monitor.sh`에 의해 매분 수집되는 원천 데이터입니다. 애플리케이션 임계치(예: MEM > 20%) 초과 시 WARNING 메시지가 함께 기록됩니다.
+[monitor.sh](./monitor.sh)에 의해 매분 수집되는 원천 데이터입니다. 애플리케이션 임계치(예: MEM > 20%) 초과 시 WARNING 메시지가 함께 기록됩니다.
 ```text
 [2026-05-30 15:30:01] PID:25287 CPU:5% MEM:31% DISK_USED:9%
 [2026-05-30 15:30:01] [WARNING] MEM threshold exceeded! (Current: 31%)
@@ -280,7 +280,7 @@ Agent READY
 <div markdown="1">
 
 **답변**:  
-* **프로세스 식별 (`pidof`)**: `pgrep -f`는 인자로 스크립트 경로에 포함된 문자열(`monitor.sh` 등)까지 파싱하여 오탐지할 우려가 큽니다. 반면 `pidof`는 Linux 커널 순수 매칭을 수행해 정확히 해당 바이너리 명칭(`agent_app`)을 명시적으로 갖는 PID만 정밀 검출하므로 백그라운드 관제에 가장 적합하고 오작동이 없습니다.
+* **프로세스 식별 (`pidof`)**: `pgrep -f`는 인자로 스크립트 경로에 포함된 문자열([monitor.sh](./monitor.sh) 등)까지 파싱하여 오탐지할 우려가 큽니다. 반면 `pidof`는 Linux 커널 순수 매칭을 수행해 정확히 해당 바이너리 명칭(`agent_app`)을 명시적으로 갖는 PID만 정밀 검출하므로 백그라운드 관제에 가장 적합하고 오작동이 없습니다.
 * **포트 확인 (`ss -tuln`)**: 기존 `netstat`은 커널 `/proc/net`을 문자열 기반으로 비효율적으로 파싱하므로 무겁고 속도가 느립니다. 이에 따라 최신 Linux 배포판에서 기본적으로 Deprecated 처리되었습니다. 반면 `ss` 명령어는 커널의 넷링크(Netlink) 인터페이스를 사용하여 소켓 상태를 메모리 단에서 직접 긁어오므로 정보 수집 속도가 매우 빠르고 성능 부하를 크게 낮출 수 있습니다.
 
 </div>
