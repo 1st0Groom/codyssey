@@ -32,24 +32,24 @@
 동료평가 및 검증을 위한 핵심 스크린샷 증거입니다.
 
 #### 1. [OOM] 메모리 누수 및 자가 종료 (MemoryGuard)
-![OOM Crash](./reports/oom_crash_log.png)
+![OOM Crash](./images/oom_crash_log.png)
 
 #### 2. [CPU] CPU 과점유 및 강제 중단 (Watchdog)
 * **CPU 과점유 프로세스 진단 (`top`)**:
-![CPU Overload top](./reports/cpu_overload_top.png)
+![CPU Overload top](./images/cpu_overload_top.png)
 * **Watchdog 강제 중단 로그**:
-![CPU Spike](./reports/cpu_spike_crash_log.png)
+![CPU Spike](./images/cpu_spike_crash_log.png)
 
 #### 3. [Deadlock] 스레드 자원 대기 및 CLI 진단 (ps/top)
 * **스레드 자원 대기 상태 로그**:
-![Deadlock](./reports/deadlock_crash_log.png)
+![Deadlock](./images/deadlock_crash_log.png)
 * **`ps -ef` 프로세스 확인 증거**:
-![Deadlock ps -ef](./reports/ps_ef_deadlock_evidence.png)
+![Deadlock ps -ef](./images/ps_ef_deadlock_evidence.png)
 * **`ps -L` 스레드 레벨 분석 증거**:
-![Deadlock ps -L](./reports/ps_l_deadlock_evidence.png)
+![Deadlock ps -L](./images/ps_l_deadlock_evidence.png)
 
 #### 4. [Bonus] 라운드 로빈 스케줄링 컨텍스트 스위치 로그
-![Scheduling Inference](./reports/scheduling_inference_log.png)
+![Scheduling Inference](./images/scheduling_inference_log.png)
 
 ---
 

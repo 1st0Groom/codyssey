@@ -8,11 +8,11 @@
 
 ### 📸 Deadlock 및 CLI 진단 스크린샷
 * **스레드 자원 대기 상태 로그**:
-![Deadlock](./deadlock_crash_log.png)
+![Deadlock](../images/deadlock_crash_log.png)
 * **`ps -ef` 프로세스 확인 증거**:
-![Deadlock ps -ef](./ps_ef_deadlock_evidence.png)
+![Deadlock ps -ef](../images/ps_ef_deadlock_evidence.png)
 * **`ps -L` 스레드 레벨 분석 증거**:
-![Deadlock ps -L](./ps_l_deadlock_evidence.png)
+![Deadlock ps -L](../images/ps_l_deadlock_evidence.png)
 
 ### 🖥️ CLI 시스템 도구 확인 증거
 프로세스가 백그라운드에서 죽지 않고 유지 중이나 자원 소비율이 정체된 증거 데이터입니다.

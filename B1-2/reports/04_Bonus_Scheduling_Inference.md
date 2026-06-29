@@ -6,7 +6,7 @@
 ## 2. 증거 로그 데이터 (App Log Snapshot)
 
 ### 📸 Scheduling Inference 로그 스크린샷
-![Scheduling Inference Log](./scheduling_inference_log.png)
+![Scheduling Inference Log](../images/scheduling_inference_log.png)
 
 ```text
 2026-06-29 13:28:11,887 [INFO] [Thread-A] Task Started. Calculating... (20%)

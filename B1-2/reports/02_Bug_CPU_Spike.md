@@ -19,9 +19,9 @@
 
 ### 📸 CPU Spike 관련 스크린샷
 * **CPU 과점유 프로세스 진단 (`top`)**:
-![CPU Overload top](./cpu_overload_top.png)
+![CPU Overload top](../images/cpu_overload_top.png)
 * **Watchdog 강제 중단 로그**:
-![CPU Spike Crash Log](./cpu_spike_crash_log.png)
+![CPU Spike Crash Log](../images/cpu_spike_crash_log.png)
 
 <details>
 <summary>📝 프로그램 실행 로그 텍스트 (클릭하여 확장)</summary>
