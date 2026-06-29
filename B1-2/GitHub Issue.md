@@ -157,3 +157,69 @@ CPU 과점유를 유발하는 프로세스와 스레드를 진단하기 위해 `
   * **단점**: 잦은 스레드 교체로 인한 **컨텍스트 스위칭 오버헤드**가 빈번하여 전체 시스템 처리량(Throughput) 자체는 단순 선입선출(FCFS) 방식보다 떨어집니다.
 * **적합한 아키텍처**: 
   다양한 유저의 요청을 동시에 신속하게 받아 처리해야 하는 **웹 애플리케이션 서버(WAS)**나 실시간 상호작용이 생명인 **데스크톱 GUI 환경**에 최적입니다.
+
+---
+
+## 🚀 [부록] 미션 시연을 위한 명령어 종합 (Cheat Sheet) 및 스케줄링 핵심 요약
+
+### 1. 라운드 로빈(Round-Robin) 스케줄링 핵심 요약
+라운드 로빈(Round-Robin)은 현대 운영체제가 사용하는 가장 대표적인 시분할(Time-Sharing) 스케줄링 알고리즘입니다.
+* **정의**: 모든 스레드(프로세스)에게 동일한 타임 슬라이스(Time Quantum)를 CPU 사용 시간으로 할당하여 공평하게 시간을 나누어 쓰고 준비 큐(Ready Queue)에서 대기하는 순환 방식입니다.
+* **선점 (Preemption)**: 할당된 시간이 끝나면 운영체제가 강제로 스레드의 실행을 중단시키고(로그 상의 `Preempted`), 준비 큐의 맨 뒤로 보낸 후 다음 스레드에게 CPU 제어권을 넘겨줍니다.
+* **특징**: 특정 스레드가 자원을 독점하는 것을 막아주어, 모든 작업이 아주 조금씩이라도 동시에 진행되는 것처럼 보이게 만듭니다.
+
+---
+
+### 2. 미션 시연을 위한 명령어 종합 (Cheat Sheet)
+장애 유도와 관측 명령어를 한곳에 정리하여 리포트 검수 및 최종 시연 시 즉시 활용할 수 있도록 구성하였습니다.
+
+#### ① 장애 유도용 세팅 (환경변수)
+터미널마다 앱을 실행하기 전에 아래 환경변수를 선언하여 원하는 장애 상황을 제어할 수 있습니다.
+
+```bash
+# 1. 스케줄링 시연용 (장애 없는 안정 상태)
+export MULTI_THREAD_ENABLE="false"
+export MEMORY_LIMIT="512"
+export CPU_MAX_OCCUPY="40"
+
+# 2. 메모리 누수(OOM) 시연용
+export MULTI_THREAD_ENABLE="true"
+export MEMORY_LIMIT="256"
+
+# 3. CPU 스파이크 시연용
+export MULTI_THREAD_ENABLE="false"
+export CPU_MAX_OCCUPY="95"
+
+# 4. 데드락 시연용
+export MULTI_THREAD_ENABLE="true"
+export MEMORY_LIMIT="512"
+```
+
+#### ② 앱 실행 및 모니터링
+```bash
+# 앱 실행
+./agent-leak-app-x86
+
+# 실시간 관제 로그 모니터링 (별도 터미널 세션)
+tail -f /var/log/agent-app/monitor.log
+
+# 특정 프로세스의 스레드 상태 정밀 관측
+pgrep -f agent-leak-app-x86  # PID 확인
+ps -L -p <PID>               # 정지된 스레드 상태 확인
+top -d 1 -p <PID>            # CPU/MEM 실시간 변화 (H키 입력 시 스레드 뷰 전환)
+```
+
+#### ③ 문제 해결 및 정리
+```bash
+# 누적 에러 로그 파일 초기화
+sudo truncate -s 0 /var/log/agent-app/monitor.log
+
+# 백그라운드 잔존 좀비 프로세스 강제 종료
+pkill -f agent-leak-app-x86
+```
+
+---
+
+### 💡 시연 및 캡처 팁
+* **스케줄링 시연**: `MULTI_THREAD_ENABLE="false"`로 설정하고 앱을 켜면, 로그에 `Preempted`가 나타납니다. 이것이 바로 라운드 로빈의 핵심 증거입니다.
+* **보고서의 논리적 흐름**: `장애 유도 환경변수 설정` ➔ `장애 발생 및 로그 증거 수집` ➔ `원인 분석 (OS 스케줄링 원리 및 Watchdog 작동)` ➔ `임시 조치 완료 (환경변수 상향/우회)` 순서로 분석 흐름을 유지하시면 됩니다.
