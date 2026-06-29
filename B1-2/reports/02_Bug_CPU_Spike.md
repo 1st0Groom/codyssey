@@ -17,7 +17,10 @@
 | `2026-06-22 18:26:30` | `agent-leak-app-x86` | **39.5%** | 4.2% | 9% | active |
 | `2026-06-22 18:26:39` | `agent-leak-app-x86` | **56.5%** | 4.2% | 9% | active |
 
-### 📸 CPU Spike Crash 로그 스크린샷
+### 📸 CPU Spike 관련 스크린샷
+* **CPU 과점유 프로세스 진단 (`top`)**:
+![CPU Overload top](./cpu_overload_top.png)
+* **Watchdog 강제 중단 로그**:
 ![CPU Spike Crash Log](./cpu_spike_crash_log.png)
 
 <details>

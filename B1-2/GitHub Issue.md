@@ -6,10 +6,10 @@
 
 ## 📑 목차 및 개별 리포트 링크
 각 장애의 상세 로그 및 세부 분석은 아래 개별 리포트에서 확인하실 수 있습니다.
-* 🚨 **[Bug 01] Memory Leak / OOM Crash**: [01_Bug_OOM_Memory_Leak.md](./01_Bug_OOM_Memory_Leak.md)
-* ⚡ **[Bug 02] CPU Spike / Watchdog Abort**: [02_Bug_CPU_Spike.md](./02_Bug_CPU_Spike.md)
-* 🔒 **[Bug 03] Deadlock / Unresponsive Process**: [03_Bug_Deadlock.md](./03_Bug_Deadlock.md)
-* ⏳ **[Bonus] Scheduling Inference**: [04_Bonus_Scheduling_Inference.md](./04_Bonus_Scheduling_Inference.md)
+* 🚨 **[Bug 01] Memory Leak / OOM Crash**: [01_Bug_OOM_Memory_Leak.md](./reports/01_Bug_OOM_Memory_Leak.md)
+* ⚡ **[Bug 02] CPU Spike / Watchdog Abort**: [02_Bug_CPU_Spike.md](./reports/02_Bug_CPU_Spike.md)
+* 🔒 **[Bug 03] Deadlock / Unresponsive Process**: [03_Bug_Deadlock.md](./reports/03_Bug_Deadlock.md)
+* ⏳ **[Bonus] Scheduling Inference**: [04_Bonus_Scheduling_Inference.md](./reports/04_Bonus_Scheduling_Inference.md)
 
 ---
 
@@ -19,12 +19,12 @@
 
 | 평가 항목 | 충족 여부 | 핵심 증거 및 확인 위치 |
 | :--- | :---: | :--- |
-| **[OOM]** 메모리 선형 증가 후 강제 종료 패턴 기록 여부 | **충족 (Yes)** | 힙 메모리가 3초마다 25MB씩 증가하다가 종료된 로그 수록 ([01 리포트](./01_Bug_OOM_Memory_Leak.md#2-evidence--logs-증거-자료)) |
-| **[OOM]** `MEMORY_LIMIT` 조정 Before & After 비교 여부 | **충족 (Yes)** | 256MB(30초 생존) vs 512MB(60초 이상 생존) 확인 ([01 리포트](./01_Bug_OOM_Memory_Leak.md#4-workaround--verification-조치-및-검증)) |
-| **[CPU]** CPU 임계치 초과 프로세스 종료 패턴 기록 여부 | **충족 (Yes)** | CPU 사용률이 56.5%까지 상승 후 Watchdog에 의해 종료된 로그 수록 ([02 리포트](./02_Bug_CPU_Spike.md#2-evidence--logs-증거-자료)) |
-| **[CPU]** `CPU_MAX_OCCUPY` 조정 Before & After 비교 여부 | **충족 (Yes)** | 임계치 50%(40초 내 강제종료) vs 80%(정상 생존 및 작동) 확인 ([02 리포트](./02_Bug_CPU_Spike.md#4-workaround--verification-조치-및-검증)) |
-| **[Deadlock]** PID 존재하나 CPU/메모리 변화 없는 멈춤 식별 여부 | **충족 (Yes)** | PID `20134`가 동작 중이나 스레드 리소스 및 로그 출력이 멈춘 현상 식별 ([03 리포트](./03_Bug_Deadlock.md#2-evidence--logs-증거-자료)) |
-| **[Deadlock]** `MULTI_THREAD_ENABLE` 조정 비교 여부 | **충족 (Yes)** | `true`(10초 내 데드락 재현) vs `false`(데드락 없이 정상 처리) 확인 ([03 리포트](./03_Bug_Deadlock.md#4-workaround--verification-조치-및-검증)) |
+| **[OOM]** 메모리 선형 증가 후 강제 종료 패턴 기록 여부 | **충족 (Yes)** | 힙 메모리가 3초마다 25MB씩 증가하다가 종료된 로그 수록 ([01 리포트](./reports/01_Bug_OOM_Memory_Leak.md#2-evidence--logs-증거-자료)) |
+| **[OOM]** `MEMORY_LIMIT` 조정 Before & After 비교 여부 | **충족 (Yes)** | 256MB(30초 생존) vs 512MB(60초 이상 생존) 확인 ([01 리포트](./reports/01_Bug_OOM_Memory_Leak.md#4-workaround--verification-조치-및-검증)) |
+| **[CPU]** CPU 임계치 초과 프로세스 종료 패턴 기록 여부 | **충족 (Yes)** | CPU 사용률이 56.5%까지 상승 후 Watchdog에 의해 종료된 로그 수록 ([02 리포트](./reports/02_Bug_CPU_Spike.md#2-evidence--logs-증거-자료)) |
+| **[CPU]** `CPU_MAX_OCCUPY` 조정 Before & After 비교 여부 | **충족 (Yes)** | 임계치 50%(40초 내 강제종료) vs 80%(정상 생존 및 작동) 확인 ([02 리포트](./reports/02_Bug_CPU_Spike.md#4-workaround--verification-조치-및-검증)) |
+| **[Deadlock]** PID 존재하나 CPU/메모리 변화 없는 멈춤 식별 여부 | **충족 (Yes)** | PID `14409`가 동작 중이나 스레드 리소스 및 로그 출력이 멈춘 현상 식별 ([03 리포트](./reports/03_Bug_Deadlock.md#2-evidence--logs-증거-자료)) |
+| **[Deadlock]** `MULTI_THREAD_ENABLE` 조정 비교 여부 | **충족 (Yes)** | `true`(10초 내 데드락 재현) vs `false`(데드락 없이 정상 처리) 확인 ([03 리포트](./reports/03_Bug_Deadlock.md#4-workaround--verification-조치-및-검증)) |
 | **[Format]** 3건 모두 현상 → 증거 → 원인 → 조치 구조 준수 여부 | **충족 (Yes)** | 01, 02, 03번 리포트 모두 표준화된 4단계 구조로 작성 완료 |
 | **[Evidence]** 리포트 내 PID, 타임스탬프, 핵심 메시지 포함 여부 | **충족 (Yes)** | 각 파일에 스크린샷 및 PID, 로그 타임스탬프, 시스템 메시지가 포함됨 |
 
@@ -32,16 +32,24 @@
 동료평가 및 검증을 위한 핵심 스크린샷 증거입니다.
 
 #### 1. [OOM] 메모리 누수 및 자가 종료 (MemoryGuard)
-![OOM Crash](./oom_crash_log.png)
+![OOM Crash](./reports/oom_crash_log.png)
 
 #### 2. [CPU] CPU 과점유 및 강제 중단 (Watchdog)
-![CPU Spike](./cpu_spike_crash_log.png)
+* **CPU 과점유 프로세스 진단 (`top`)**:
+![CPU Overload top](./reports/cpu_overload_top.png)
+* **Watchdog 강제 중단 로그**:
+![CPU Spike](./reports/cpu_spike_crash_log.png)
 
 #### 3. [Deadlock] 스레드 자원 대기 및 CLI 진단 (ps/top)
-![Deadlock](./deadlock_crash_log.png)
+* **스레드 자원 대기 상태 로그**:
+![Deadlock](./reports/deadlock_crash_log.png)
+* **`ps -ef` 프로세스 확인 증거**:
+![Deadlock ps -ef](./reports/ps_ef_deadlock_evidence.png)
+* **`ps -L` 스레드 레벨 분석 증거**:
+![Deadlock ps -L](./reports/ps_l_deadlock_evidence.png)
 
 #### 4. [Bonus] 라운드 로빈 스케줄링 컨텍스트 스위치 로그
-![Scheduling Inference](./scheduling_inference_log.png)
+![Scheduling Inference](./reports/scheduling_inference_log.png)
 
 ---
 

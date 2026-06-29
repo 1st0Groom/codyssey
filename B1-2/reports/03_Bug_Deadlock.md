@@ -7,25 +7,29 @@
 ## 2. Evidence & Logs (증거 자료)
 
 ### 📸 Deadlock 및 CLI 진단 스크린샷
-![Deadlock Crash Log](./deadlock_crash_log.png)
+* **스레드 자원 대기 상태 로그**:
+![Deadlock](./deadlock_crash_log.png)
+* **`ps -ef` 프로세스 확인 증거**:
+![Deadlock ps -ef](./ps_ef_deadlock_evidence.png)
+* **`ps -L` 스레드 레벨 분석 증거**:
+![Deadlock ps -L](./ps_l_deadlock_evidence.png)
 
 ### 🖥️ CLI 시스템 도구 확인 증거
 프로세스가 백그라운드에서 죽지 않고 유지 중이나 자원 소비율이 정체된 증거 데이터입니다.
 
-* **PID 존재 증거** (`ps -ef | grep agent-leak-app` 실행)
+* **PID 존재 증거** (`ps -ef | grep agent-leak-app-x86` 실행)
   ```bash
-  $ ps -ef | grep agent-leak-app | grep -v grep
-  agent-ad  20134  1915  0 18:40 ?        00:00:00 ./agent-leak-app-x86
+  $ ps -ef | grep agent-leak-app-x86 | grep -v grep
+  agent-a+  14409  14313  0 14:51 pts/4    00:00:00 ./agent-leak-app-x86
+  agent-a+  14410  14409  0 14:51 pts/4    00:00:00 ./agent-leak-app-x86
   ```
-* **스레드별 리소스 변화 정체 증거** (`ps -L -p 20134` 실행)
+* **스레드별 리소스 변화 정체 증거** (`ps -L -p 14409` 실행)
   ```bash
-  $ ps -L -p 20134 -o lwp,pcpu,pmem,stat
-    LWP %CPU %MEM STAT
-  20134  0.0  1.2  Sl
-  20135  0.0  1.2  Sl  <-- Worker-Thread-1 (상태 정체)
-  20136  0.0  1.2  Sl  <-- Worker-Thread-2 (상태 정체)
+  $ ps -L -p 14409
+    PID   LWP TTY          TIME CMD
+  14409 14409 pts/4    00:00:00 agent-leak-app-
   ```
-  `top -H -p 20134` 조회 시 모든 스레드가 CPU 사용률 `0.0%`로 락이 걸려 완전히 멈춰 있습니다.
+  `ps -L -p 14409` 조회 시 단일 메인 스레드만 식별되며, 다른 작업 스레드들은 교착 상태로 인해 동작하지 않고 리소스 소비가 완전히 정체되어 있습니다.
 
 ### 📝 프로그램 실행 로그의 마지막 구간 발췌
 ```text
