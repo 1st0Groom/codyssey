@@ -4,15 +4,24 @@
 에이전트 애플리케이션의 멀티스레딩 상태에서 출력되는 개별 워커 스레드(`Thread-A`, `Thread-B`, `Thread-C`)들의 작업 패턴과 타임스탬프, 그리고 작업 진척률(Progress) 변화 추이를 수집하여 내부 런타임의 작업 스케줄링 기법을 역추적하였습니다.
 
 ## 2. 증거 로그 데이터 (App Log Snapshot)
+
+### 📸 Scheduling Inference 로그 스크린샷
+![Scheduling Inference Log](./scheduling_inference_log.png)
+
 ```text
-[2026-06-22 19:00:00.100] [Thread-A] Task Started. Calculating... (10%)
-[2026-06-22 19:00:00.150] [Thread-A] Calculating... (20%)
-[2026-06-22 19:00:00.200] [Thread-B] Task Started. Calculating... (10%)  <-- Thread-A 중단, Thread-B 실행 전환 (Context Switch)
-[2026-06-22 19:00:00.250] [Thread-B] Calculating... (20%)
-[2026-06-22 19:00:00.300] [Thread-C] Task Started. Calculating... (10%)  <-- Thread-B 중단, Thread-C 실행 전환 (Context Switch)
-[2026-06-22 19:00:00.350] [Thread-A] Resumed. Calculating... (30%)       <-- Thread-C 중단, Thread-A 재개
-[2026-06-22 19:00:00.400] [Thread-A] Calculating... (40%)
-[2026-06-22 19:00:00.450] [Thread-B] Resumed. Calculating... (30%)       <-- Thread-A 중단, Thread-B 재개
+2026-06-29 13:28:11,887 [INFO] [Thread-A] Task Started. Calculating... (20%)
+2026-06-29 13:28:11,938 [INFO] [Thread-A] Calculating... (40%)
+2026-06-29 13:28:11,988 [INFO] [Thread-A] Preempted. Progress saved at (40%)
+2026-06-29 13:28:12,039 [INFO] [Thread-B] Task Started. Calculating... (20%)   <-- Thread-A 선점, Thread-B 실행 전환 (Context Switch)
+2026-06-29 13:28:12,090 [INFO] [Thread-B] Calculating... (40%)
+2026-06-29 13:28:12,140 [INFO] [Thread-B] Preempted. Progress saved at (40%)
+2026-06-29 13:28:12,191 [INFO] [Thread-C] Task Started. Calculating... (20%)   <-- Thread-B 선점, Thread-C 실행 전환 (Context Switch)
+2026-06-29 13:28:12,242 [INFO] [Thread-C] Calculating... (40%)
+2026-06-29 13:28:12,292 [INFO] [Thread-C] Preempted. Progress saved at (40%)
+2026-06-29 13:28:12,343 [INFO] [Thread-A] Resumed. Calculating... (60%)        <-- Thread-C 선점, Thread-A 재개
+2026-06-29 13:28:12,394 [INFO] [Thread-A] Calculating... (80%)
+2026-06-29 13:28:12,445 [INFO] [Thread-A] Preempted. Progress saved at (80%)
+2026-06-29 13:28:12,495 [INFO] [Thread-B] Resumed. Calculating... (60%)        <-- Thread-A 선점, Thread-B 재개
 ```
 
 ## 3. 패턴 분석 및 스케줄링 알고리즘 결론

@@ -18,7 +18,7 @@
 | `2026-06-22 18:26:39` | `agent-leak-app-x86` | **56.5%** | 4.2% | 9% | active |
 
 ### 📸 CPU Spike Crash 로그 스크린샷
-![CPU Spike Crash Log](/home/camus/workspace/codyssey/B1-2/스크린샷 2026-06-22 18-33-32.png)
+![CPU Spike Crash Log](./cpu_spike_crash_log.png)
 
 <details>
 <summary>📝 프로그램 실행 로그 텍스트 (클릭하여 확장)</summary>

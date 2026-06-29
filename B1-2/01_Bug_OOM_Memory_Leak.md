@@ -18,7 +18,7 @@
 | `2026-06-22 16:19:21` | `agent-leak-app-x86` | 1.5% | **98.2%** | 9% | active |
 
 ### 📸 OOM Crash 로그 스크린샷
-![OOM Crash Log](/home/camus/workspace/codyssey/B1-2/붙여넣은 이미지.png)
+![OOM Crash Log](./oom_crash_log.png)
 
 <details>
 <summary>📝 프로그램 실행 로그 텍스트 (클릭하여 확장)</summary>
