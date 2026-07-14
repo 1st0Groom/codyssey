@@ -122,7 +122,6 @@
   * 잘못된 명령어: `(error) ERR unknown command '<cmd>'`
   * 잘못된 인자 개수: `(error) ERR wrong number of arguments for '<cmd>' command`
   * 정수 파싱 및 범위 오류: `(error) ERR value is not an integer or out of range`
-  * 메모리 초과 상황(OOM): `(error) OOM command not allowed when used_memory > 'maxmemory'.`
 * **연동**: `cli.py`의 토큰 검증 단계 및 `core/redis_store.py`의 `SET()`, `CONFIG_SET()` 내부의 예외 처리 분기
 
 ---
