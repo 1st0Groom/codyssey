@@ -27,6 +27,13 @@ body {
   font-family: var(--font-base);
 }
 
+#about img {
+    width: 180px;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
 nav {
     display : flex;
     justify-content : space-between;

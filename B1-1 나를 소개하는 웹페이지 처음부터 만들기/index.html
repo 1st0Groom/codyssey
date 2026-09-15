@@ -49,24 +49,14 @@
 
         <section id="projects">
             <h2>Projects</h2>
-            <p id ="project-status"
-            role="status"> 로딩 중...</p>
-
-            <div class="project-grid"
-            id="project-list"></div>
-
-            <button id = "project-retry"
-            type="button" hidden>
-            다시 시도
-        </button>
-        </section>
-
+            <p id="projects-status" role="status">로딩 중...</p>
             <div class="projects-grid" id="projects-list"></div>
+            <button id="projects-retry" type="button" hidden>다시 시도</button>
         </section>
 
         <section id="contact">
             <h2>Contact</h2>
-            <form id="contact-form">
+            <form id="contact-form" novalidate>
                 <div class="form-group">
                     <label for="name">이름</label>
                     <input type="text" id="name" name="name">
@@ -83,8 +73,7 @@
                     <span class="error" id="message-error"></span>
                 </div>
                 <button type="submit">보내기</button>
-                <p id="form-success" role="status">
-                </p>
+                <p id="form-success" role="status"></p>
             </form>
         </section>
     </main>
@@ -96,11 +85,11 @@
         </ul>
     </footer>
 
-    <button>
+    <button
         class="scroll-top-btn"
         type="button"
         aria-label="페이지 맨 위로 이동"
-        >
+    >
         ↑
     </button>
 </body>
