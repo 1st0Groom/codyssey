@@ -121,6 +121,31 @@ const projectsStatus = document.querySelector('#projects-status');
 const projectsList = document.querySelector('#projects-list');
 const projectsRetry = document.querySelector('#projects-retry');
 const githubApiUrl = 'https://api.github.com/users/1st0Groom/repos';
+const projectsCacheKey = 'github-projects';
+// ponytail: 이 목록은 저장소 변경 시 낡을 수 있다. 자주 바뀌면 빌드 시 JSON으로 생성한다.
+const fallbackProjects = [
+    'Salon-Manager-pro',
+    'aws-cloud-bootcamp',
+    'codyssey',
+    'university'
+].map((name) => ({
+    name,
+    description: 'GitHub 저장소에서 자세히 보기',
+    html_url: `https://github.com/1st0Groom/${name}`
+}));
+
+const renderProjects = (repos) => {
+    projectsList.innerHTML = repos.map((repo) => `
+        <article class="project-card">
+            <h3>${repo.name}</h3>
+            <p>${repo.description ?? '설명이 없습니다.'}</p>
+            ${Number.isInteger(repo.stargazers_count) ? `<p>⭐ ${repo.stargazers_count}</p>` : ''}
+            <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer">
+                GitHub에서 보기
+            </a>
+        </article>
+    `).join('');
+};
 
 const loadProjects = async () => {
     projectsStatus.textContent = '로딩 중...';
@@ -141,21 +166,21 @@ const loadProjects = async () => {
             return;
         }
 
+        localStorage.setItem(projectsCacheKey, JSON.stringify(repos));
         projectsStatus.textContent = '';
-
-        projectsList.innerHTML = repos.map((repo) => `
-            <article class="project-card">
-                <h3>${repo.name}</h3>
-                <p>${repo.description ?? '설명이 없습니다.'}</p>
-                <p> ${repo.stargazers_count}</p>
-                <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer">
-                    GitHub에서 보기
-                </a>
-            </article>
-        `).join('');
+        renderProjects(repos);
     } catch (error) {
-        console.error(error);
-        projectsStatus.textContent = '프로젝트를 불러올 수 없습니다.';
+        console.warn(error.message);
+        let cachedProjects = [];
+
+        try {
+            cachedProjects = JSON.parse(localStorage.getItem(projectsCacheKey) ?? '[]');
+        } catch {
+            localStorage.removeItem(projectsCacheKey);
+        }
+
+        renderProjects(cachedProjects.length > 0 ? cachedProjects : fallbackProjects);
+        projectsStatus.textContent = '실시간 API 연결에 실패해 저장된 프로젝트 목록을 표시합니다.';
         projectsRetry.hidden = false;
     }
 };
