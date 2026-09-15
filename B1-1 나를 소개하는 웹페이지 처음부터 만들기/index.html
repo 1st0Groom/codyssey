@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>변승언의 포트폴리오</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script defer src="js/main.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <span class="logo">변승언</span>
+            <ul class="nav-menu">
+                <li><a href="#about">About</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <button class="dark-mode-btn" aria-label="다크모드 전환">🌙</button>
+            <button class="hamburger" aria-label="메뉴 열기">☰</button>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero">
+            <h1>안녕하세요, 변승언입니다.</h1>
+            <p>1Scoop 사장 변승언입니다.</p>
+            <a href="#projects" class="btn">프로젝트 보기</a>
+            <a href="#contact" class="btn">연락하기</a>
+        </section>
+
+        <section id="about">
+            <h2>About Me</h2>
+            <img src="images/profile.jpg" alt="변승언의 프로필 사진">
+            <p>자기소개 문단을 여기 씁니다.</p>
+        </section>
+
+        <section id="skills">
+            <h2>Skills</h2>
+            <ul class="skills-list">
+                <li>HTML</li>
+                <li>CSS</li>
+                <li>JavaScript</li>
+                <li>Python</li>
+                <li>C++</li>
+            </ul>
+        </section>
+
+        <section id="projects">
+            <h2>Projects</h2>
+            <p id ="project-status"
+            role="status"> 로딩 중...</p>
+
+            <div class="project-grid"
+            id="project-list"></div>
+
+            <button id = "project-retry"
+            type="button" hidden>
+            다시 시도
+        </button>
+        </section>
+
+            <div class="projects-grid" id="projects-list"></div>
+        </section>
+
+        <section id="contact">
+            <h2>Contact</h2>
+            <form id="contact-form">
+                <div class="form-group">
+                    <label for="name">이름</label>
+                    <input type="text" id="name" name="name">
+                    <span class="error" id="name-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="email">이메일</label>
+                    <input type="email" id="email" name="email">
+                    <span class="error" id="email-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="message">메시지</label>
+                    <textarea id="message" name="message"></textarea>
+                    <span class="error" id="message-error"></span>
+                </div>
+                <button type="submit">보내기</button>
+                <p id="form-success" role="status">
+                </p>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 변승언</p>
+        <ul class="social-links">
+            <li><a href="https://github.com/1st0Groom">GitHub</a></li>
+        </ul>
+    </footer>
+
+    <button>
+        class="scroll-top-btn"
+        type="button"
+        aria-label="페이지 맨 위로 이동"
+        >
+        ↑
+    </button>
+</body>
+</html>
