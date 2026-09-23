@@ -33,6 +33,18 @@ chmod +x scripts/*.sh
   "../B1-1 나를 소개하는 웹페이지 처음부터 만들기"
 ```
 
+## 인스턴스 중지·재시작
+
+최종 삭제 전에는 인스턴스만 중지했다가 다시 시작할 수 있다. 중지하면 EC2 컴퓨팅 비용은 멈추지만 EBS 비용은 남으며, 재시작 후 퍼블릭 IP가 바뀔 수 있다.
+
+```bash
+AWS_PROFILE=codyssey-b31 ./scripts/instance-power.sh codyssey-b3-1 stop
+AWS_PROFILE=codyssey-b31 ./scripts/instance-power.sh codyssey-b3-1 start
+AWS_PROFILE=codyssey-b31 ./scripts/instance-power.sh codyssey-b3-1 status
+```
+
+`destroy.sh`는 VPC와 EC2를 완전히 삭제하므로 이후에는 `start`로 다시 켤 수 없다. 다시 생성하려면 `deploy.sh`를 실행한다.
+
 ## 외부 접속 검증 방식: A
 
 배포 후 브라우저에서 `http://<PUBLIC_IP>/`를 열어 포트폴리오 페이지가 정상 표시되는지 확인한다. `/health`의 `200 OK` 응답도 보조 검증으로 확인한다.
