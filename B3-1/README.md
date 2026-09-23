@@ -33,28 +33,36 @@ chmod +x scripts/*.sh
   "../B1-1 나를 소개하는 웹페이지 처음부터 만들기"
 ```
 
-## 외부 접속 검증 방식: B
+## 외부 접속 검증 방식: A
 
-배포 후 다음 명령으로 `GET http://<PUBLIC_IP>/health`의 `200 OK`와 본문 `OK`를 확인한다.
+배포 후 브라우저에서 `http://<PUBLIC_IP>/`를 열어 포트폴리오 페이지가 정상 표시되는지 확인한다. `/health`의 `200 OK` 응답도 보조 검증으로 확인한다.
 
 ```bash
 ./scripts/verify.sh codyssey-b3-1
 ```
 
-실제 배포 뒤 아래 값을 채우고 결과 화면을 `proof/health.png`로 저장한다.
+실제 배포 결과:
 
-- 선택 방식: B
-- URL: `http://54.180.141.122/health`
-- Public IP: `54.180.141.122`
-- 검증 일시: `2026-09-23 16:27 KST`
-- 응답: `200 OK`, 본문 `OK`
-- 스크린샷: `proof/health.png`
+- 선택 방식: A
+- URL: `http://54.180.128.61/`
+- Public IP: `54.180.128.61`
+- 검증 일시: `2026-09-23 17:22 KST`
+- 응답: 포트폴리오 페이지 정상 표시
+- 보조 검증: `GET /health` → `200 OK`, 본문 `OK`
+- 페이지 스크린샷: [`proof/site.png`](proof/site.png)
+- Health 스크린샷: [`proof/health.png`](proof/health.png)
 
 ## 제출 파일
 
 - 아키텍처: [`docs/architecture.png`](docs/architecture.png)
 - 트러블슈팅: [`docs/troubleshooting.md`](docs/troubleshooting.md)
 - 정리 체크리스트: [`docs/cleanup-checklist.md`](docs/cleanup-checklist.md)
+- CloudFormation 스택: [`proof/cloudformation-stack.png`](proof/cloudformation-stack.png)
+- CloudFormation 리소스: [`proof/cloudformation-resources.png`](proof/cloudformation-resources.png)
+- EC2 실행 상태: [`proof/ec2-running-list.png`](proof/ec2-running-list.png), [`proof/ec2-running.png`](proof/ec2-running.png)
+- 라우팅 테이블: [`proof/route-table.png`](proof/route-table.png)
+- 보안 그룹: [`proof/security-group.png`](proof/security-group.png)
+- 삭제 증빙: [`proof/cleanup.png`](proof/cleanup.png)
 - 인프라 코드: [`infra/template.yaml`](infra/template.yaml)
 - 최소권한 정책: [`iam/deployment-policy.json`](iam/deployment-policy.json)
 
