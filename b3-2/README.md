@@ -12,6 +12,16 @@ export NAITO_API_KEY="네이토에서 발급받은 키"
 export NAITO_API_URL="네이토가 안내한 OpenAI 호환 Chat Completions 주소"
 export NAITO_MODEL="사용할 모델명"
 
+python3 main.py
+# ai-git> commit --safe-mode
+# ai-git> pr --safe-mode
+# ai-git> exit
+```
+
+명령어를 한 번만 실행하고 CLI 안에서 여러 요청을 이어서 입력할 수 있습니다. `help`로 사용법을 볼 수 있고, `exit` 또는 `quit`으로 종료합니다.
+
+```bash
+# 한 번 실행하는 방식도 계속 지원합니다.
 python3 main.py commit --safe-mode
 python3 main.py pr --safe-mode
 ```
