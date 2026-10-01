@@ -132,7 +132,7 @@ def build_messages(command, snapshot, safe_mode, max_files, max_lines):
     )
     instruction = (
         # 없는 테스트 결과나 변경 내용을 AI가 지어내지 못하게 선을 그어 둠.
-        "Git status와 diff만 근거로 작성하세요. 없는 사실, 테스트 결과, 수치, 파일 변경을 만들지 마세요. "
+        "Git status와 diff만 근거로 작성하세요. 없는 사실f, 테스트 결과, 수치, 파일 변경을 만들지 마세요. "
         "지정한 형식만 반환하고 마크다운 코드 펜스는 사용하지 마세요."
     )
     if command == "commit":
@@ -151,52 +151,74 @@ def build_messages(command, snapshot, safe_mode, max_files, max_lines):
     ]
 
 
-
 def call_ai(messages, api_key, api_url, model, temperature, max_tokens, timeout):
     # 네이토는 OpenAI 호환 API라서 여기서 HTTP POST 한 번 날리면 됨.
-    payload_data = {"model": model, "max_tokens": max_tokens, "messages": messages}
+    # commit/pr 초안은 최소한의 응답 길이가 필요해서, 너무 작은 값은 서버가 빈 결과를 돌려주기 쉽다.
+    max_tokens = max(max_tokens, 256)
+
+    def send_request(payload_data):
+        payload = json.dumps(payload_data).encode("utf-8")
+        request = urllib.request.Request(
+            api_url,
+            data=payload,
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=timeout) as response:
+                # 응답은 JSON으로 받고 아래에서 필요한 텍스트만 꺼냄.
+                data = json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as error:
+            # 서버가 4xx/5xx를 주면 응답 일부를 같이 보여줘야 원인을 찾기 쉬움.
+            detail = error.read().decode("utf-8", errors="replace")[:500]
+            raise RuntimeError(f"AI API HTTP {error.code}: {detail}") from error
+        except urllib.error.URLError as error:
+            raise RuntimeError(f"AI API 네트워크 오류: {error.reason}") from error
+        except TimeoutError as error:
+            raise RuntimeError("AI API 요청 시간이 초과되었습니다") from error
+        except json.JSONDecodeError as error:
+            raise RuntimeError("AI API 응답을 JSON으로 해석하지 못했습니다") from error
+
+        try:
+            # OpenAI 호환 응답의 첫 번째 선택지에서 AI 답변을 가져옴.
+            choice = data["choices"][0]
+            finish_reason = choice.get("finish_reason")
+            content = choice.get("message", {}).get("content", "")
+            if isinstance(content, list):
+                # 일부 모델은 content를 문자열이 아니라 조각 목록으로 줌.
+                content = "\n".join(
+                    part.get("text", "") for part in content if isinstance(part, dict)
+                )
+            content = str(content).strip()
+        except (KeyError, IndexError, TypeError) as error:
+            raise RuntimeError("AI API 응답 형식이 예상과 다릅니다") from error
+        if not content:
+            if finish_reason == "length":
+                raise RuntimeError(
+                    "AI API 응답이 max_tokens 제한에 걸려 비어 있습니다. "
+                    "응답 길이를 더 크게 설정해 다시 시도하세요."
+                )
+            raise RuntimeError("AI API 응답에 생성된 내용이 없습니다")
+        return content
+
+    payload_data = {"model": model, "messages": messages}
     if not re.match(r"^(?:gpt-5|o[1-9])", model.lower()):
         # 네이토의 GPT-5 계열은 temperature를 보내면 에러가 나서 빼는 거임.
         payload_data["temperature"] = temperature
-    payload = json.dumps(payload_data).encode("utf-8")
-    request = urllib.request.Request(
-        api_url,
-        data=payload,
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-        },
-        method="POST",
-    )
-    try:
-        with urllib.request.urlopen(request, timeout=timeout) as response:
-            # 응답은 JSON으로 받고 아래에서 필요한 텍스트만 꺼냄.
-            data = json.loads(response.read().decode("utf-8"))
-    except urllib.error.HTTPError as error:
-        # 서버가 4xx/5xx를 주면 응답 일부를 같이 보여줘야 원인을 찾기 쉬움.
-        detail = error.read().decode("utf-8", errors="replace")[:500]
-        raise RuntimeError(f"AI API HTTP {error.code}: {detail}") from error
-    except urllib.error.URLError as error:
-        raise RuntimeError(f"AI API 네트워크 오류: {error.reason}") from error
-    except TimeoutError as error:
-        raise RuntimeError("AI API 요청 시간이 초과되었습니다") from error
-    except json.JSONDecodeError as error:
-        raise RuntimeError("AI API 응답을 JSON으로 해석하지 못했습니다") from error
 
+    payload_data["max_tokens"] = max_tokens
     try:
-        # OpenAI 호환 응답의 첫 번째 선택지에서 AI 답변을 가져옴.
-        content = data["choices"][0]["message"]["content"]
-        if isinstance(content, list):
-            # 일부 모델은 content를 문자열이 아니라 조각 목록으로 줌.
-            content = "\n".join(
-                part.get("text", "") for part in content if isinstance(part, dict)
-            )
-        content = str(content).strip()
-    except (KeyError, IndexError, TypeError) as error:
-        raise RuntimeError("AI API 응답 형식이 예상과 다릅니다") from error
-    if not content:
-        raise RuntimeError("AI API 응답에 생성된 내용이 없습니다")
-    return content
+        return send_request(payload_data)
+    except RuntimeError as error:
+        detail = str(error)
+        if "max_tokens" not in detail.lower() and "max_completion_tokens" not in detail.lower():
+            raise
+        fallback_payload = {k: v for k, v in payload_data.items() if k != "max_tokens"}
+        fallback_payload["max_completion_tokens"] = max_tokens
+        return send_request(fallback_payload)
 
 
 def clean_generated_text(text):

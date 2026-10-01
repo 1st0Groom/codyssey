@@ -59,6 +59,15 @@ class AiGitHelperTest(unittest.TestCase):
             self.assertIn("commit [옵션]", output.getvalue())
             call.assert_not_called()
 
+    def test_max_tokens_falls_back_to_max_completion_tokens(self):
+        # 일부 OpenAI 호환 API는 max_tokens 대신 max_completion_tokens를 요구함.
+        payload = {"model": "gpt-5-mini", "messages": [{"role": "user", "content": "hi"}]}
+        payload["max_tokens"] = 256
+        fallback = {k: v for k, v in payload.items() if k != "max_tokens"}
+        fallback["max_completion_tokens"] = 256
+        self.assertNotIn("max_completion_tokens", payload)
+        self.assertIn("max_completion_tokens", fallback)
+
 
 if __name__ == "__main__":
     unittest.main()
