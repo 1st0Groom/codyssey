@@ -151,6 +151,7 @@ def build_messages(command, snapshot, safe_mode, max_files, max_lines):
     ]
 
 
+
 def call_ai(messages, api_key, api_url, model, temperature, max_tokens, timeout):
     # 네이토는 OpenAI 호환 API라서 여기서 HTTP POST 한 번 날리면 됨.
     payload_data = {"model": model, "max_tokens": max_tokens, "messages": messages}
@@ -296,6 +297,7 @@ def temperature(value):
     if not 0 <= number <= 2:
         raise argparse.ArgumentTypeError("temperature는 0~2 범위여야 합니다")
     return number
+    
 
 
 def add_options(parser, suppress_defaults=False):
